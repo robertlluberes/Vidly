@@ -1,5 +1,4 @@
 ﻿using System;
-using Vidly.Models;
 
 namespace Vidly.Dtos
 {
@@ -9,7 +8,7 @@ namespace Vidly.Dtos
 
         public string Name { get; set; }
 
-        [Min18YearIfAMember]
+        //[Min18YearIfAMember]
         public DateTime? Birthdate { get; set; }
 
         public bool IsSuscribedToNewsletter { get; set; }
