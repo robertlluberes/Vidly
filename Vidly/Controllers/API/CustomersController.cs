@@ -38,10 +38,11 @@ namespace Vidly.Controllers.API
         // POST /api/customers
         public CustomerDto CreateCustomer(CustomerDto customerDto)
         {
-            if (!ModelState.IsValid)
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+
 
             var customer = Mapper.Map<CustomerDto, Customer>(customerDto);
+            if (!ModelState.IsValid)
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
             _context.Customers.Add(customer);
             _context.SaveChanges();
 
