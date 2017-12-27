@@ -24,7 +24,7 @@ namespace Vidly.Controllers.API
         [HttpPost]
         public IHttpActionResult CreateNewRental(NewRentalDto newRentalDto)
         {
-            var customer = _context.Customers.FirstOrDefault(c => c.Id == newRentalDto.CustomerId);
+            var customer = _context.Customers.Single(c => c.Id == newRentalDto.CustomerId);
             var movies = _context.Movies.Where(m => newRentalDto.MovieIds.Contains(m.Id)).ToList();
 
             foreach (var movie in movies)
