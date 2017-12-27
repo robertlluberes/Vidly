@@ -1,14 +1,47 @@
 ﻿using System;
+using System.Linq;
 using System.Web.Http;
+using Vidly.Dtos;
+using Vidly.Models;
 
 namespace Vidly.Controllers.API
 {
+    [AllowAnonymous]
     public class NewRentalsController : ApiController
     {
-        [HttpPost]
-        public IHttpActionResult CreateNewRental()
+        private ApplicationDbContext _context;
+
+        public NewRentalsController()
         {
-            throw new NotImplementedException();
+            _context = new ApplicationDbContext();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
+        }
+
+        [HttpPost]
+        public IHttpActionResult CreateNewRental(NewRentalDto newRentalDto)
+        {
+            var customer = _context.Customers.FirstOrDefault(c => c.Id == newRentalDto.CustomerId);
+            var movies = _context.Movies.Where(m => newRentalDto.MovieIds.Contains(m.Id)).ToList();
+
+            foreach (var movie in movies)
+            {
+                var rental = new Rental()
+                {
+                    Customer = customer,
+                    Movie = movie,
+                    DateRented = DateTime.Now
+                };
+
+                _context.Rentals.Add(rental);
+            }
+
+            _context.SaveChanges();
+
+            return Ok();
         }
     }
 }

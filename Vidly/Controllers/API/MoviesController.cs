@@ -8,6 +8,7 @@ using Vidly.Models;
 
 namespace Vidly.Controllers.API
 {
+    [AllowAnonymous]
     public class MoviesController : ApiController
     {
         private ApplicationDbContext _context;
