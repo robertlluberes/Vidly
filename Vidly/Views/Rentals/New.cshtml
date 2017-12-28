@@ -5,7 +5,7 @@
 
 <h2>New Rental Form</h2>
 
-<form>
+<form id="newRental">
     <div class="form-group">
         <label>Customer</label>
         <div class="tt-container">
@@ -53,8 +53,9 @@
                 display: 'name',
                 source: customers
             }).on("typeahead:select", function (e, customer) {
-                vm.customerId = customer.Id;
+                vm.customerId = customer.id;
                 console.log(customer.name);
+                console.log(customer.customerId);
             });
 
             var movies = new Bloodhound({
@@ -79,9 +80,23 @@
                 $("#movies").append("<li class='list-group-item'>" + movie.name + "</li>");
                 $("#movie").typeahead("val", "");
 
-                vm.movieIds.push(movie.Id);
+                vm.movieIds.push(movie.id);
+                console.log(vm.movieIds[0]);
             });
 
+            $("#newRental").submit(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: "/api/NewRentals",
+                    method: "POST",
+                    data: vm
+                }).done(function () {
+                    toastr.success("Rentals successfully recorded.");
+                }).fail(function () {
+                    toastr.error("Something unespectec happend");
+                });
+            });
 
         });
     </script>
