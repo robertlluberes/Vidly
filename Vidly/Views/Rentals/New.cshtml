@@ -9,13 +9,13 @@
     <div class="form-group">
         <label>Customer</label>
         <div class="tt-container">
-            <input id="customer" type="text" value="" class="form-control typeahead" />
+            <input id="customer" name="customer" data-rule-validCustomer="true" required type="text" value="" class="form-control typeahead" />
         </div>
     </div>
     <div class="form-group">
         <label>Movie</label>
         <div class="tt-container">
-            <input id="movie" type="text" value="" class="form-control typeahead" />
+            <input id="movie" name="movie" data-rule-atLeastOneMovie="true" type="text" value="" class="form-control typeahead" />
         </div>
     </div>
 
@@ -28,6 +28,7 @@
     <button class="btn btn-primary">SUBMIT</button>
 </form>
 @section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
     <script>
         $(document).ready(function () {
             var vm = {
@@ -54,8 +55,6 @@
                 source: customers
             }).on("typeahead:select", function (e, customer) {
                 vm.customerId = customer.id;
-                console.log(customer.name);
-                console.log(customer.customerId);
             });
 
             var movies = new Bloodhound({
@@ -81,22 +80,41 @@
                 $("#movie").typeahead("val", "");
 
                 vm.movieIds.push(movie.id);
-                console.log(vm.movieIds[0]);
             });
 
-            $("#newRental").submit(function (e) {
-                e.preventDefault();
+            $.validator.addMethod("validCustomer", function () {
+                return vm.customerId && vm.customerId != 0;
+            }, "Please select a valid Customer");
 
-                $.ajax({
-                    url: "/api/NewRentals",
-                    method: "POST",
-                    data: vm
-                }).done(function () {
-                    toastr.success("Rentals successfully recorded.");
-                }).fail(function () {
-                    toastr.error("Something unespectec happend");
-                });
-            });
+
+            $.validator.addMethod("atLeastOneMovie", function () {
+                return vm.movieIds.length > 0 ;
+            }, "Plase select at least one Movie.");
+
+            var validator = $("#newRental").validate({
+                submitHandler: function () {
+                    $.ajax({
+                        url: "/api/NewRentals",
+                        method: "POST",
+                        data: vm
+                    }).done(function () {
+                        toastr.success("Rentals successfully recorded.");
+
+
+                        $("#customer").typeahead("val", "");
+                        $("#movie").typeahead("val", "");
+                        $("#movies").empty();
+                        vm = { movieIds: [] };
+
+                        validator.resetForm();
+
+                    }).fail(function () {
+                        toastr.error("Something unespectec happend");
+                    });
+
+                    return false;
+                }
+            });            
 
         });
     </script>
