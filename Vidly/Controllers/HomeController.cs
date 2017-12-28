@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 
 namespace Vidly.Controllers
 {
@@ -19,6 +20,7 @@ namespace Vidly.Controllers
 
         public ActionResult Contact()
         {
+            throw new Exception();
             ViewBag.Message = "Your contact page.";
 
             return View();
